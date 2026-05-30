@@ -1,0 +1,12 @@
+{
+    "botName": "BollocksBot",
+    "enviornmentFilename": ".env",
+    "twitch":
+    {
+        "tokenKey": "TWITCH_TOKEN",
+        "scheme": "wss",
+        "baseUrl": "irc-ws.chat.twitch.tv",
+        "port": 443,
+        "channelName": "polshkrev"
+    }
+}
