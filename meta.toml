@@ -1,0 +1,25 @@
+[project]
+name = "BollocksBot"
+author = {name = "Polshkrev"}
+description = "Twitch chat bot coded live."
+type = "application"
+
+[project.version]
+minor = 1
+
+[license]
+type = "MIT"
+path = "LICENSE"
+
+[urls]
+repository = "https://github.com/Polshkrev/BollocksBot"
+twitch = "https://www.twitch.tv/polshkrev"
+
+[paths]
+readme = "README.md"
+enviornment = ".env"
+
+[commands]
+script = ["bin/build"]
+build = ["bin/compile"]
+run = ["bin/run"]
