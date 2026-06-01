@@ -29,10 +29,19 @@ func (irc *IRC) dial(url string) {
 	irc.connection = connection
 }
 
+// Concurrently write a given message to a given websocket connection.
+func writeConcurrent(connection *websocket.Conn, message []byte, errorChannel chan<- error) {
+	defer close(errorChannel)
+	var readError error = connection.WriteMessage(websocket.TextMessage, message)
+	errorChannel <- readError
+}
+
 // Write a given message to the irc connection.
 // If the message can not be written, a [gopolutils.RuntimeError] is returned.
 func (irc *IRC) Write(message string) *gopolutils.Exception {
-	var except error = irc.connection.WriteMessage(websocket.TextMessage, []byte(message))
+	var errorChannel chan error = make(chan error, 1)
+	go writeConcurrent(irc.connection, []byte(message), errorChannel)
+	var except error = <-errorChannel // Blocking operation
 	if except != nil {
 		return gopolutils.NewNamedException(gopolutils.RuntimeError, "%s\n", except.Error())
 	}
