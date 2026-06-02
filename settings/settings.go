@@ -15,6 +15,7 @@ var (
 	Path *fayl.Path = fayl.PathFromParts(Folder, Name, Suffix) // Full [fayl.Path] of the settings.
 )
 
+// Twitch specific settings.
 type TwitchSettings struct {
 	TokenKey    string `json:"tokenKey"`    // Key to lookup the twitch token within the enviornment mapping.
 	Scheme      string `json:"scheme"`      // Scheme of the twitch url.

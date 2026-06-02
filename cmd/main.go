@@ -1,26 +1,20 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net/url"
+	"os"
+	"sync"
 
 	"github.com/Polshkrev/BollocksBot/models"
+	"github.com/Polshkrev/BollocksBot/models/bot"
 	"github.com/Polshkrev/BollocksBot/models/irc"
 	"github.com/Polshkrev/BollocksBot/settings"
 	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/collections"
 	"github.com/Polshkrev/gopolutils/fayl"
 	"github.com/joho/godotenv"
-)
-
-var (
-	config      settings.Settings                   = settings.Read(settings.Path)                                                                         // Global configuration of the application.
-	enviornment collections.Mapping[string, string] = loadEnviorment(fayl.PathFrom(config.EnviornmentFilename))                                            // Global enviornment.
-	token       string                              = *gopolutils.Must(enviornment.At(config.Twitch.TokenKey))                                             // Twitch token.
-	ircUrl      url.URL                             = urlParse(fmt.Sprintf("%s://%s:%d", config.Twitch.Scheme, config.Twitch.BaseUrl, config.Twitch.Port)) // Twitch IRC url.
-	nameMessage string                              = fmt.Sprintf("%s %s", models.Name, config.BotName)                                                    // Login message.
-	authMessage string                              = fmt.Sprintf("%s %s", models.Authenticate, token)                                                     // Token message.
-	joinMessage string                              = fmt.Sprintf("%s #%s", models.Join, config.Twitch.ChannelName)                                        // Join message.
 )
 
 // Load a given .env file as a [collections.Mapping].
@@ -63,21 +57,26 @@ func urlParse(raw string) url.URL {
 }
 
 func main() {
+	var config settings.Settings = settings.Read(settings.Path)
+	var enviornment collections.Mapping[string, string] = loadEnviorment(fayl.PathFrom(config.EnviornmentFilename))
+	var token string = *gopolutils.Must(enviornment.At(config.Twitch.TokenKey))
+	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", config.Twitch.Scheme, config.Twitch.BaseUrl, config.Twitch.Port))
+	var authMessage string = fmt.Sprintf("%s %s", models.Authenticate, token)
+	var nameMessage string = fmt.Sprintf("%s %s", models.Name, config.BotName)
+	var joinMessage string = fmt.Sprintf("%s #%s", models.Join, config.Twitch.ChannelName)
 	var irc *irc.IRC = irc.New(ircUrl.String())
 	defer irc.Close()
-	var except *gopolutils.Exception = irc.Write(authMessage)
-	if except != nil {
-		panic(except)
-	}
-	except = irc.Write(nameMessage)
-	if except != nil {
-		panic(except)
-	}
-	except = irc.Write(joinMessage)
-	if except != nil {
-		panic(except)
-	}
-	for {
-		fmt.Print(gopolutils.Must(irc.Read()))
-	}
+	var bot *bot.Bot = bot.New(irc, config)
+	bot.Authenticate(authMessage)
+	bot.Login(nameMessage)
+	bot.Join(joinMessage)
+	var waitGroup *sync.WaitGroup = new(sync.WaitGroup)
+	waitGroup.Go(func() {
+		bot.Read()
+	})
+	var reader *bufio.Reader = bufio.NewReader(os.Stdin)
+	waitGroup.Go(func() {
+		bot.WaitForInput(reader)
+	})
+	waitGroup.Wait()
 }
