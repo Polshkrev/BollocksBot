@@ -62,9 +62,9 @@ func (bot *Bot) HandleMessage(message string) bool {
 
 	var messageCString *C.char = C.CString(message)
 	defer C.free(unsafe.Pointer(messageCString))
-	C.lexer_set_source(messageCString)
+	C.lexer_set_source(&lexer, messageCString)
 
-	var tokens C.token_array
+	var tokens C.token_array_t
 	C.tokenize(&lexer, &tokens)
 
 	var messageType C.message_t = C.message_init()
@@ -77,12 +77,12 @@ func (bot *Bot) HandleMessage(message string) bool {
 	}
 
 	var rawCommand string = trimSizedString(messageType.command)
-	var rawArgument string = sizedToString(messageType.argument)
+	var rawArgument string = sizedToString(messageType.arguments)
 
 	var raw string
 
 	if rawArgument == "" || len(rawArgument) == 0 {
-		raw = command.HandleCommand(rawCommand, sizedToString(messageType.argument))
+		raw = command.HandleCommand(rawCommand, sizedToString(messageType.arguments))
 	} else {
 		raw = command.HandleCommand(rawCommand, rawArgument)
 	}
