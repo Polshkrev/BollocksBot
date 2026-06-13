@@ -36,7 +36,7 @@ func writeConcurrent(connection *websocket.Conn, message []byte, errorChannel ch
 	errorChannel <- readError
 }
 
-// Write a given message to the irc connection.
+// Write a given message to the IRC connection.
 // If the message can not be written, a [gopolutils.RuntimeError] is returned.
 func (irc *IRC) Write(message string) *gopolutils.Exception {
 	var errorChannel chan error = make(chan error, 1)
@@ -59,8 +59,8 @@ func readConcurrent(connection *websocket.Conn, resultChannel chan<- []byte, err
 	errorChannel <- readError
 }
 
-// Read from the irc connection.
-// Returns the string representation of the irc connection.
+// Read from the IRC connection.
+// Returns the string representation of the IRC connection.
 // If the connection can not be read, a [gopolutils.RuntimeError] is returned with an empty string.
 func (irc *IRC) Read() (string, *gopolutils.Exception) {
 	var resultChannel chan []byte = make(chan []byte, 1)
@@ -74,7 +74,7 @@ func (irc *IRC) Read() (string, *gopolutils.Exception) {
 	return string(result), nil
 }
 
-// Close the irc connection.
+// Close the IRC connection.
 // If closing the connection fails, a [gopolutils.RuntimeError] is returned.
 func (irc *IRC) Close() *gopolutils.Exception {
 	var closeError error = irc.connection.Close()

@@ -9,6 +9,7 @@ import (
 
 	"github.com/Polshkrev/BollocksBot/models"
 	"github.com/Polshkrev/BollocksBot/models/bot"
+	"github.com/Polshkrev/BollocksBot/models/bot/command"
 	"github.com/Polshkrev/BollocksBot/models/irc"
 	"github.com/Polshkrev/BollocksBot/settings"
 	"github.com/Polshkrev/gopolutils"
@@ -56,27 +57,43 @@ func urlParse(raw string) url.URL {
 	return *result
 }
 
+// Write a variadic amount of messages through the given bot's IRC client.
+func writeMessages(bot *bot.Bot, messages ...string) {
+	var message string
+	for _, message = range messages {
+		bot.Write(message)
+	}
+}
+
 func main() {
 	var config settings.Settings = settings.Read(settings.Path)
+
 	var enviornment collections.Mapping[string, string] = loadEnviorment(fayl.PathFrom(config.EnviornmentFilename))
 	var token string = *gopolutils.Must(enviornment.At(config.Twitch.TokenKey))
+
 	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", config.Twitch.Scheme, config.Twitch.BaseUrl, config.Twitch.Port))
 	var authMessage string = fmt.Sprintf("%s %s", models.Authenticate, token)
 	var nameMessage string = fmt.Sprintf("%s %s", models.Name, config.BotName)
 	var joinMessage string = fmt.Sprintf("%s #%s", models.Join, config.Twitch.ChannelName)
+
 	var irc *irc.IRC = irc.New(ircUrl.String())
 	defer irc.Close()
+
 	var bot *bot.Bot = bot.New(irc, config)
-	bot.Authenticate(authMessage)
-	bot.Login(nameMessage)
-	bot.Join(joinMessage)
+	writeMessages(bot, authMessage, nameMessage, joinMessage)
+
+	command.Setup()
+
 	var waitGroup *sync.WaitGroup = new(sync.WaitGroup)
+
 	waitGroup.Go(func() {
 		bot.Read()
 	})
+
 	var reader *bufio.Reader = bufio.NewReader(os.Stdin)
 	waitGroup.Go(func() {
 		bot.WaitForInput(reader)
 	})
+
 	waitGroup.Wait()
 }
