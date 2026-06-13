@@ -51,8 +51,9 @@ int main(int argc, char **argv)
     const char *bin_folder = "bin";
     const char *compiler = "gcc";
     const char *release_flag = "release";
-    char **target_name = flag_string("name", "main", "Set the name of the programme to build.");
-    bool *release = flag_bool("release", false, "Set the release mode optimizations.");
+    const char *default_name = "main";
+    char **target_name = flag_string(name_flag, default_name, "Set the name of the programme to build.");
+    bool *release = flag_bool(release_flag, false, "Set the release mode optimizations.");
     flag_parse(argc, argv);
     logger_t *logger = logger_init(build_folder, LOG_DEBUG);
     logger_add_console(logger);
