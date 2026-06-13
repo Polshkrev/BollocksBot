@@ -39,6 +39,7 @@ typedef struct
 typedef struct
 {
     token_t tokens[MAX_TOKENS];
+    size_t size;
 } token_array_t;
 
 /**
@@ -47,6 +48,8 @@ typedef struct
  * @returns A string representation of the given token kind.
  */
 const char *token_kind_to_string(TokenKind kind);
+
+token_array_t token_array_init(void);
 
 /**
  * @brief Construct a new token.
@@ -73,7 +76,7 @@ const char *token_kind_to_string(TokenKind kind)
         } break;
         case TokenColon:
         {
-            return "TokenColon";
+            return ":";
         } break;
         case TokenWord:
         {
@@ -81,19 +84,19 @@ const char *token_kind_to_string(TokenKind kind)
         } break;
         case TokenBang:
         {
-            return "TokenBang";
+            return "!";
         } break;
         case TokenHash:
         {
-            return "TokenHash";
+            return "#";
         } break;
         case TokenSingleQuote:
         {
-            return "TokenSingleQuote";
+            return "'";
         } break;
         case TokenDoubleQuote:
         {
-            return "TokenDoubleQuote";
+            return "\"";
         } break;
         case TokenUnknown:
         {
@@ -104,6 +107,14 @@ const char *token_kind_to_string(TokenKind kind)
             return NULL;
         } break;
     }
+}
+
+token_array_t token_array_init(void)
+{
+    return (token_array_t)
+    {
+        .size = 0
+    };
 }
 
 /**
