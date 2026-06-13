@@ -4,7 +4,7 @@
 /**
  * @brief Detemine if the given command is valid.
  * @param command Command which to analyse.
- * @returns True if the given command is a valid irc command.
+ * @returns True if the given command is a valid IRC command.
  */
 bool command_is_valid(const string_t *command);
 
@@ -38,7 +38,7 @@ bool parse_command(message_t *message);
 /**
  * @brief Detemine if the given command is valid.
  * @param command Command which to analyse.
- * @returns True if the given command is a valid irc command.
+ * @returns True if the given command is a valid IRC command.
  */
 bool command_is_valid(const string_t *command)
 {
