@@ -6,7 +6,7 @@
 
 #include <stdbool.h> // bool
 
-/** @brief Representation of an irc message as the sum of its parts. */
+/** @brief Representation of an IRC message as the sum of its parts. */
 typedef struct
 {
     string_t name;
@@ -24,7 +24,7 @@ typedef struct
 message_t message_init(void);
 
 /**
- * @brief Parse the initial prefix of the irc message.
+ * @brief Parse the initial prefix of the IRC message.
  * @param array Array of tokens from which to read.
  * @param index 'Baton-like' sentinel index within the current state of the parsed message.
  * @param message Output of the parsed prefix.
@@ -60,7 +60,7 @@ bool parse_target(const token_array_t *array, size_t *index, message_t *message)
 bool parse_text(const token_array_t *array, size_t *index, message_t *message);
 
 /**
- * @brief Parse an irc message.
+ * @brief Parse an IRC message.
  * @param array Array of tokens from which to read.
  * @param message Output of the parsed message.
  * @returns True if the message was able to be parsed, else false.
@@ -81,7 +81,7 @@ message_t message_init(void)
 }
 
 /**
- * @brief Parse the initial prefix of the irc message.
+ * @brief Parse the initial prefix of the IRC message.
  * @param array Array of tokens from which to read.
  * @param index 'Baton-like' sentinel index within the current state of the parsed message.
  * @param message Output of the parsed prefix.
@@ -156,7 +156,7 @@ bool parse_text(const token_array_t *array, size_t *index, message_t *message)
 }
 
 /**
- * @brief Parse an irc message.
+ * @brief Parse an IRC message.
  * @param array Array of tokens from which to read.
  * @param message Output of the parsed message.
  * @returns True if the message was able to be parsed, else false.
