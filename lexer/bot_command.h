@@ -44,7 +44,7 @@ bool command_is_valid(const string_t *command)
 {
     if (!command->count || !command->data) return false;
     else if (command->count < 1) return false;
-    else if (command->data[0] != *token_type_to_string(TokenBang)) return false;
+    else if (command->data[0] != *token_kind_to_string(TokenBang)) return false;
     return true;
 }
 
@@ -71,7 +71,7 @@ string_t command_extract_arguments(const string_t *message, size_t *index)
 {
     while (*index < message->count && isspace(message->data[*index])) (*index)++;
     if (*index >= message->count) return string_null;
-    if (message->data[*index] != *token_type_to_string(TokenDoubleQuote) && message->data[*index] != *token_type_to_string(TokenSingleQuote)) return string_new(message->data + *index, message->count - *index);
+    if (message->data[*index] != *token_kind_to_string(TokenDoubleQuote) && message->data[*index] != *token_kind_to_string(TokenSingleQuote)) return string_new(message->data + *index, message->count - *index);
     (*index)++;
     size_t start = *index;
     while (*index < message->count && message->data[*index] != *token_kind_to_string(TokenDoubleQuote) && message->data[*index] != *token_kind_to_string(TokenSingleQuote)) (*index)++;
