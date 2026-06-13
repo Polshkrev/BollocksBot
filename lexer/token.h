@@ -49,6 +49,10 @@ typedef struct
  */
 const char *token_kind_to_string(TokenKind kind);
 
+/**
+ * @brief Construct a new array of tokens.
+ * @returns A new array of tokens.
+ */
 token_array_t token_array_init(void);
 
 /**
@@ -109,6 +113,10 @@ const char *token_kind_to_string(TokenKind kind)
     }
 }
 
+/**
+ * @brief Construct a new array of tokens.
+ * @returns A new array of tokens.
+ */
 token_array_t token_array_init(void)
 {
     return (token_array_t)
