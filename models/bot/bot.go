@@ -82,11 +82,10 @@ func (bot *Bot) HandleMessage(message string) bool {
 	var raw string
 
 	if rawArgument == "" || len(rawArgument) == 0 {
-		raw = command.HandleCommand(rawCommand, sizedToString(messageType.arguments))
+		raw = command.HandleCommand(rawCommand, sizedToString(messageType.name))
 	} else {
 		raw = command.HandleCommand(rawCommand, rawArgument)
 	}
-
 	bot.Respond(raw)
 	return true
 }
@@ -96,6 +95,7 @@ func (bot *Bot) HandleMessage(message string) bool {
 func (bot *Bot) Read() {
 	for {
 		var readMessage string = gopolutils.Must(bot.client.Read())
+		fmt.Println(readMessage)
 		if readMessage == "" || len(readMessage) == 0 {
 			continue
 		} else if !bot.HandleMessage(readMessage) {
