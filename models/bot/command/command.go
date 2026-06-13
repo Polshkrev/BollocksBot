@@ -45,7 +45,7 @@ func HandleCommand(name string, argument string) string {
 		}
 		return command.caller(argument)
 	}
-	return handleUnknown(argument)
+	return handleUnknown(name)
 }
 
 // Represent all available command options as a string.

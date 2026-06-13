@@ -95,7 +95,6 @@ func (bot *Bot) HandleMessage(message string) bool {
 func (bot *Bot) Read() {
 	for {
 		var readMessage string = gopolutils.Must(bot.client.Read())
-		fmt.Println(readMessage)
 		if readMessage == "" || len(readMessage) == 0 {
 			continue
 		} else if !bot.HandleMessage(readMessage) {
