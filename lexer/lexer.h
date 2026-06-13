@@ -133,7 +133,7 @@ void lexer_skip_whitespace(lexer_t *lexer)
 size_t lexer_get_word_length(lexer_t *lexer)
 {
     size_t length = 0;
-    while (lexer->source[lexer->cursor + length] && !isspace(lexer->source[lexer->cursor + length]) && lexer->source[lexer->cursor + length] != *token_type_to_string(TokenColon))
+    while (lexer->source[lexer->cursor + length] && !isspace(lexer->source[lexer->cursor + length]) && lexer->source[lexer->cursor + length] != *token_kind_to_string(TokenColon))
     {
         length++;
     }
@@ -152,7 +152,7 @@ token_t lexer_next_token(lexer_t *lexer)
     const char *start = &character;
 
     if (!character) return token_init(TokenEnd, start, 0);
-    else if (character == *token_type_to_string(TokenColon))
+    else if (character == *token_kind_to_string(TokenColon))
     {
         lexer_advance(lexer);                                               
         return token_init(TokenColon, start, 1);
