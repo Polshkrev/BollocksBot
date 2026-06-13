@@ -6,7 +6,7 @@
 
 #include <stdbool.h> // bool
 
-/** @brief Representation of an IRC message as the sum of its parts. */
+/** @brief Representation of an irc message as the sum of its parts. */
 typedef struct
 {
     string_t name;
