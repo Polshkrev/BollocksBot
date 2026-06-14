@@ -12,6 +12,7 @@ import (
 	"github.com/Polshkrev/BollocksBot/models/bot/command"
 	"github.com/Polshkrev/BollocksBot/models/irc"
 	"github.com/Polshkrev/BollocksBot/settings"
+	"github.com/Polshkrev/BollocksBot/setup"
 	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/collections"
 	"github.com/Polshkrev/gopolutils/fayl"
@@ -65,21 +66,38 @@ func writeMessages(bot *bot.Bot, messages ...string) {
 	}
 }
 
+// Check if the given key is stored in the system's enviornment.
+// Returns true if the given key is set within the system's enviornment.
+func check(key string) bool {
+	var ok bool
+	_, ok = os.LookupEnv(key)
+	return ok
+}
+
 func main() {
-	var config settings.Settings = settings.Read(settings.Path)
+	var settingsPath *fayl.Path = gopolutils.Must(setup.Configuration(settings.Path))
 
-	var enviornment collections.Mapping[string, string] = loadEnviorment(fayl.PathFrom(config.EnviornmentFilename))
-	var token string = *gopolutils.Must(enviornment.At(config.Twitch.TokenKey))
+	var configuration settings.Settings = settings.Read(settingsPath)
 
-	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", config.Twitch.Scheme, config.Twitch.BaseUrl, config.Twitch.Port))
+	var token string
+
+	if !check(configuration.Twitch.TokenKey) {
+		var enviornmentFile *fayl.Path = gopolutils.Must(setup.Configuration(fayl.PathFrom(configuration.EnviornmentFilename)))
+		var enviornment collections.Mapping[string, string] = loadEnviorment(enviornmentFile)
+		token = *gopolutils.Must(enviornment.At(configuration.Twitch.TokenKey))
+	} else {
+		token = os.Getenv(configuration.Twitch.TokenKey)
+	}
+
+	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", configuration.Twitch.Scheme, configuration.Twitch.BaseUrl, configuration.Twitch.Port))
 	var authMessage string = fmt.Sprintf("%s %s", models.Authenticate, token)
-	var nameMessage string = fmt.Sprintf("%s %s", models.Name, config.BotName)
-	var joinMessage string = fmt.Sprintf("%s #%s", models.Join, config.Twitch.ChannelName)
+	var nameMessage string = fmt.Sprintf("%s %s", models.Name, configuration.BotName)
+	var joinMessage string = fmt.Sprintf("%s #%s", models.Join, configuration.Twitch.ChannelName)
 
 	var irc *irc.IRC = irc.New(ircUrl.String())
 	defer irc.Close()
 
-	var bot *bot.Bot = bot.New(irc, config)
+	var bot *bot.Bot = bot.New(irc, configuration)
 	writeMessages(bot, authMessage, nameMessage, joinMessage)
 
 	command.Setup()
