@@ -7,6 +7,10 @@
         "scheme": "wss",
         "baseUrl": "irc-ws.chat.twitch.tv",
         "port": 443,
-        "channelName": "polshkrev"
+        "channelName": "polshkrev",
+        "today":
+        {
+            "topic": "Creating an api"
+        }
     }
 }

@@ -15,13 +15,19 @@ var (
 	Path *fayl.Path = fayl.PathFromParts(Folder, Name, Suffix) // Full [fayl.Path] of the settings.
 )
 
+// Dynamic today command settings.
+type TodayCommand struct {
+	Topic string `json:"topic"` // Topic of the today command
+}
+
 // Twitch specific settings.
 type TwitchSettings struct {
-	TokenKey    string `json:"tokenKey"`    // Key to lookup the twitch token within the enviornment mapping.
-	Scheme      string `json:"scheme"`      // Scheme of the twitch url.
-	BaseUrl     string `json:"baseUrl"`     // Base url of the twitch irc client.
-	Port        uint16 `json:"port"`        // Port of the twitch irc client.
-	ChannelName string `json:"channelName"` // Target channel name.
+	TokenKey    string       `json:"tokenKey"`    // Key to lookup the twitch token within the enviornment mapping.
+	Scheme      string       `json:"scheme"`      // Scheme of the twitch url.
+	BaseUrl     string       `json:"baseUrl"`     // Base url of the twitch irc client.
+	Port        uint16       `json:"port"`        // Port of the twitch irc client.
+	ChannelName string       `json:"channelName"` // Target channel name.
+	Today       TodayCommand `json:"today"`       // Today command settings.
 }
 
 // Global settings of the application.

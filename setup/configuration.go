@@ -19,6 +19,9 @@ var (
 			"baseUrl":     "irc-ws.chat.twitch.tv",
 			"port":        443,
 			"channelName": "polshkrev",
+			"today": goserialize.Object{
+				"topic": "Making the chat bot.",
+			},
 		},
 	}
 )
