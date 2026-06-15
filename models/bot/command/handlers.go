@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 // Callback for the 'hello' command.
@@ -17,7 +18,7 @@ func handlePing(argument string) string {
 
 // Callback for the 'today' command
 func handleToday(argument string) string {
-	return fmt.Sprintf("@%s %s", argument, os.Getenv("TODAY_COMMAND"))
+	return fmt.Sprintf("@%s %s", argument, os.Getenv(strings.ToUpper(string(Today))))
 }
 
 // Callback for an unknown command.
