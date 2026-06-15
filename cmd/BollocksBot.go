@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/Polshkrev/BollocksBot/models"
@@ -74,10 +75,20 @@ func check(key string) bool {
 	return ok
 }
 
+// Set the today command's enviornment variable.
+func setTodayCommand(value string) {
+	var setError error = os.Setenv(strings.ToUpper(string(command.Today)), value)
+	if setError != nil {
+		panic(gopolutils.NewNamedException(gopolutils.KeyError, "%s", setError))
+	}
+}
+
 func main() {
 	var settingsPath *fayl.Path = gopolutils.Must(setup.Configuration(settings.Path))
 
 	var configuration settings.Settings = settings.Read(settingsPath)
+
+	setTodayCommand(configuration.Twitch.Today.Topic)
 
 	var token string
 
