@@ -33,6 +33,7 @@ func Setup() {
 	commandEntries.Append(New(string(Available), AvailableCommands))
 	commandEntries.Append(New(string(Ping), handlePing))
 	commandEntries.Append(New(string(Hello), handleHello))
+	commandEntries.Append(New(string(Today), handleToday))
 }
 
 // Call a command's callback of a given name with a given argument.
