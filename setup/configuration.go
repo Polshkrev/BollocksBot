@@ -5,22 +5,6 @@ import (
 
 	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/fayl"
-	"github.com/Polshkrev/goserialize"
-)
-
-var (
-	folder          string             = "BollocksBot"       // Configuration folder name. This should be set to the name of the bot.
-	defaultSettings goserialize.Object = goserialize.Object{ // Default settings to copy to the configuration file.
-		"botName":             "BollocksBot",
-		"enviornmentFilename": ".env",
-		"twitch": goserialize.Object{
-			"tokenKey":    "TWITCH_TOKEN",
-			"scheme":      "wss",
-			"baseUrl":     "irc-ws.chat.twitch.tv",
-			"port":        443,
-			"channelName": "polshkrev",
-		},
-	}
 )
 
 // Obtain the configuration folder name.
@@ -80,6 +64,8 @@ func makeConcurrentConfiguration(resultChannel chan<- *fayl.Path, errorChannel c
 
 }
 
+// Create the configuration folder if it does not exist.
+// Retruns the [fayl.Path] of the configuration folder.
 func makeConfiguration() *fayl.Path {
 	var resultChannel chan *fayl.Path = make(chan *fayl.Path, 1)
 	var errorChannel chan *gopolutils.Exception = make(chan *gopolutils.Exception, 1)
@@ -97,25 +83,31 @@ func makeConfiguration() *fayl.Path {
 // If the given configuration path can not be created, the associated error is returned.
 func Configuration(path *fayl.Path) (*fayl.Path, *gopolutils.Exception) {
 	var configurationPath *fayl.Path = makeConfiguration()
+
 	var botPath *fayl.Path = configurationPath.Join(*fayl.PathFrom(folder))
 	var botEntry *fayl.Entry = fayl.NewEntry(botPath)
 	botEntry.SetType(fayl.DirectoryType)
+
 	var except *gopolutils.Exception = makeEntry(botEntry)
 	if except != nil {
 		return nil, except
 	}
+
 	var settingsPath *fayl.Path = botPath.Join(*path)
 	var settingsEntry *fayl.Entry = fayl.NewEntry(settingsPath)
 	if settingsPath.Exists() {
 		return settingsPath, nil
 	}
+
 	except = makeEntry(settingsEntry)
 	if except != nil {
 		return nil, except
 	}
+
 	except = fayl.WriteObject(settingsPath, &defaultSettings)
 	if except != nil {
 		return nil, except
 	}
+
 	return settingsPath, nil
 }

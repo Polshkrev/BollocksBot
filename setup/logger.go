@@ -21,27 +21,31 @@ func getLogFile(format string) *fayl.Path {
 	return fayl.PathFrom(logFile)
 }
 
-// Setup the log file based on the given folder and time format.
-// Returns the log file path.
-// If the given log file path can not be created, the associated error is returned.
+// Setup the configuration based on the given path.
+// Returns the configuration path.
+// If the given configuration path can not be created, the associated error is returned.
 func Logging(logFolder, format string) (*fayl.Path, *gopolutils.Exception) {
 	var configurationPath *fayl.Path = makeConfiguration()
-	var logPath *fayl.Path = configurationPath.JoinAs(logFolder)
+
+	var botPath *fayl.Path = configurationPath.Join(*fayl.PathFrom(folder))
+	var botEntry *fayl.Entry = fayl.NewEntry(botPath)
+	botEntry.SetType(fayl.DirectoryType)
+
+	var except *gopolutils.Exception = makeEntry(botEntry)
+	if except != nil {
+		return nil, except
+	}
+	var logFolderPath *fayl.Path = botPath.JoinAs(logFolder)
+	var logPath *fayl.Path = logFolderPath.Join(*getLogFile(format))
+	if logFolderPath.Exists() {
+		return logPath, nil
+	}
+
 	var logEntry *fayl.Entry = fayl.NewEntry(logPath)
-	logEntry.SetType(fayl.DirectoryType)
-	var except *gopolutils.Exception = makeEntry(logEntry)
+	except = makeEntry(logEntry)
 	if except != nil {
 		return nil, except
 	}
-	var logFile *fayl.Path = getLogFile(format)
-	var finalPath *fayl.Path = logPath.Join(*logFile)
-	var finalEntry *fayl.Entry = fayl.NewEntry(finalPath)
-	if finalPath.Exists() {
-		return finalPath, nil
-	}
-	except = makeEntry(finalEntry)
-	if except != nil {
-		return nil, except
-	}
-	return finalPath, nil
+
+	return logPath, nil
 }
