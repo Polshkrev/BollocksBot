@@ -8,7 +8,7 @@ import (
 const (
 	Folder string      = "settings" // Parent folder of the settings file.
 	Name   string      = "settings" // Name of the settings file.
-	Suffix fayl.Suffix = fayl.Json  // [fayl.Suffix] of the settings file.
+	Suffix fayl.Suffix = fayl.Toml  // [fayl.Suffix] of the settings file.
 )
 
 var (
@@ -30,11 +30,18 @@ type TwitchSettings struct {
 	Today       TodayCommand `json:"today"`       // Today command settings.
 }
 
+// Logging settings.
+type Logging struct {
+	Folder string `json:"folder"`
+	Format string `json:"format"`
+}
+
 // Global settings of the application.
 type Settings struct {
 	BotName             string         `json:"botName"`             // name of the bot.
 	EnviornmentFilename string         `json:"enviornmentFilename"` // Name of the .env file.
 	Twitch              TwitchSettings `json:"twitch"`              // Encapsulation of the twitch-specific settings.
+	Logging             Logging        `json:"logging"`
 }
 
 // Read a [Settings] object from a given [fayl.Path].

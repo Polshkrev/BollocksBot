@@ -29,14 +29,16 @@ var (
 // IRC Bot.
 type Bot struct {
 	client    *irc.IRC
+	logger    *gopolutils.Logger
 	setttings settings.Settings
 }
 
 // Contruct a new [Bot] with a given [IRC] and [settings.Settings].
 // Returns a new [Bot] with a given [IRC] and [settings.Settings].
-func New(client *irc.IRC, settings settings.Settings) *Bot {
+func New(client *irc.IRC, logger *gopolutils.Logger, settings settings.Settings) *Bot {
 	var bot *Bot = new(Bot)
 	bot.client = client
+	bot.logger = logger
 	bot.setttings = settings
 	return bot
 }
@@ -53,6 +55,7 @@ func (bot *Bot) Write(message string) {
 // Send a properly formatted IRC repsonse.
 func (bot *Bot) Respond(message string) {
 	bot.Write(fmt.Sprintf("%s #%s :%s", models.Message, bot.setttings.Twitch.ChannelName, message))
+	bot.logger.Log(fmt.Sprintf("%s: %s", bot.setttings.BotName, message), gopolutils.Info)
 }
 
 // Handle each message that comes through the bot's IRC client.
@@ -71,7 +74,11 @@ func (bot *Bot) HandleMessage(message string) bool {
 
 	if !C.parse_message(&tokens, &messageType) {
 		return false
-	} else if !C.parse_command(&messageType) {
+	}
+
+	bot.logger.Log(fmt.Sprintf("%s: %s", sizedToString(messageType.name), sizedToString(messageType.text)), gopolutils.Info)
+
+	if !C.parse_command(&messageType) {
 		sendPing(bot, &messageType)
 		return true
 	}
@@ -95,6 +102,7 @@ func (bot *Bot) HandleMessage(message string) bool {
 func (bot *Bot) Read() {
 	for {
 		var readMessage string = gopolutils.Must(bot.client.Read())
+		bot.logger.Log(readMessage, gopolutils.Info)
 		if readMessage == "" || len(readMessage) == 0 {
 			continue
 		} else if !bot.HandleMessage(readMessage) {

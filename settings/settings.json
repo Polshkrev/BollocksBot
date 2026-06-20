@@ -11,6 +11,11 @@
         "today":
         {
             "topic": "Creating an api"
+        },
+        "logging":
+        {
+            "folder": "logs",
+            "format": "2006-01"
         }
     }
 }
