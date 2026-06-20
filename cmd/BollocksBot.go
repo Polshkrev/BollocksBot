@@ -115,7 +115,7 @@ func main() {
 	var irc *irc.IRC = irc.New(ircUrl.String())
 	defer irc.Close()
 
-	var bot *bot.Bot = bot.New(irc, configuration)
+	var bot *bot.Bot = bot.New(irc, logger, configuration)
 	writeMessages(bot, authMessage, nameMessage, joinMessage)
 
 	command.Setup()
