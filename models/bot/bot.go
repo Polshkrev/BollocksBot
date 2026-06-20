@@ -29,14 +29,16 @@ var (
 // IRC Bot.
 type Bot struct {
 	client    *irc.IRC
+	logger    *gopolutils.Logger
 	setttings settings.Settings
 }
 
 // Contruct a new [Bot] with a given [IRC] and [settings.Settings].
 // Returns a new [Bot] with a given [IRC] and [settings.Settings].
-func New(client *irc.IRC, settings settings.Settings) *Bot {
+func New(client *irc.IRC, logger *gopolutils.Logger, settings settings.Settings) *Bot {
 	var bot *Bot = new(Bot)
 	bot.client = client
+	bot.logger = logger
 	bot.setttings = settings
 	return bot
 }
@@ -95,6 +97,7 @@ func (bot *Bot) HandleMessage(message string) bool {
 func (bot *Bot) Read() {
 	for {
 		var readMessage string = gopolutils.Must(bot.client.Read())
+		bot.logger.Log(readMessage, gopolutils.Info)
 		if readMessage == "" || len(readMessage) == 0 {
 			continue
 		} else if !bot.HandleMessage(readMessage) {
