@@ -23,6 +23,10 @@ var (
 				"topic": "Making the chat bot.",
 			},
 		},
+		"logging": goserialize.Object{
+			"folder": "logs",
+			"format": "2006-01",
+		},
 	}
 )
 
