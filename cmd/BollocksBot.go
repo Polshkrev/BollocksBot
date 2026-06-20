@@ -105,6 +105,13 @@ func main() {
 	var nameMessage string = fmt.Sprintf("%s %s", models.Name, configuration.BotName)
 	var joinMessage string = fmt.Sprintf("%s #%s", models.Join, configuration.Twitch.ChannelName)
 
+	var logger *gopolutils.Logger = gopolutils.NewLogger(configuration.BotName, gopolutils.Info)
+	var logFile *fayl.Path = gopolutils.Must(setup.Logging(configuration.Logging.Folder, configuration.Logging.Format))
+	var except *gopolutils.Exception = logger.FileOnly(logFile.String())
+	if except != nil {
+		panic(except)
+	}
+
 	var irc *irc.IRC = irc.New(ircUrl.String())
 	defer irc.Close()
 
