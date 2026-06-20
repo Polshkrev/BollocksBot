@@ -8,7 +8,7 @@ import (
 const (
 	Folder string      = "settings" // Parent folder of the settings file.
 	Name   string      = "settings" // Name of the settings file.
-	Suffix fayl.Suffix = fayl.Json  // [fayl.Suffix] of the settings file.
+	Suffix fayl.Suffix = fayl.Toml  // [fayl.Suffix] of the settings file.
 )
 
 var (
