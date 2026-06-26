@@ -23,10 +23,7 @@ import (
 )
 
 const (
-	crlf string = "\r\n" // Line feed charactor.
-)
-
-var (
+	crlf        string = "\r\n"                // Line feed charactor.
 	pingMessage string = "PONG :tmi.twitch.tv" // Standard response to a health check.
 )
 
