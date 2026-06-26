@@ -22,6 +22,10 @@ import (
 	"github.com/Polshkrev/gopolutils"
 )
 
+const (
+	crlf string = "\r\n" // Line feed charactor.
+)
+
 var (
 	pingMessage string = "PONG :tmi.twitch.tv" // Standard response to a health check.
 )
@@ -97,12 +101,17 @@ func (bot *Bot) HandleMessage(message string) bool {
 	return true
 }
 
+// Trim the trailing line feed charactor.
+// Returns the given message without the trailing line feed charactor.
+func trimNewline(message string) string {
+	return strings.TrimSuffix(message, crlf)
+}
+
 // Read the current IRC client's buffer.
 // If the message can not be read, the function panics with a [gopolutils.RuntimeError].
 func (bot *Bot) Read() {
 	for {
-		var readMessage string = gopolutils.Must(bot.client.Read())
-		bot.logger.Log(readMessage, gopolutils.Info)
+		var readMessage string = trimNewline(gopolutils.Must(bot.client.Read()))
 		if readMessage == "" || len(readMessage) == 0 {
 			continue
 		} else if !bot.HandleMessage(readMessage) {
