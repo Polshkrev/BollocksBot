@@ -153,11 +153,12 @@ func sendPing(bot *Bot, message *C.message_t) {
 	if sizedToString(message.keyword) != string(models.Ping) {
 		return
 	}
-	bot.Write(handlePing())
+	bot.Write(handlePing(bot.logger))
 }
 
 // Obtain the response to a health check.
 // Returns pong.
-func handlePing() string {
+func handlePing(logger *gopolutils.Logger) string {
+	logger.Log("[PING MESSAGE]", gopolutils.Info)
 	return pingMessage
 }
