@@ -35,6 +35,11 @@ func get(key string) string {
 	return result
 }
 
+// Callback for the `ban` command.
+func handleBan(argument string) string {
+	return fmt.Sprintf("%s has been banned.", argument)
+}
+
 // Callback for the 'hello' command.
 func handleHello(argument string) string {
 	return fmt.Sprintf("Hello @%s", argument)
@@ -50,7 +55,7 @@ func handleToday(argument string) string {
 	return fmt.Sprintf("@%s %s", argument, get(strings.ToUpper(Today.String())))
 }
 
-// Callback for the vod command.
+// Callback for the `vod` command.
 func handleVod(argument string) string {
 	var link string = get(strings.ToUpper(Youtube.String()))
 	return fmt.Sprintf("@%s %s", argument, link)

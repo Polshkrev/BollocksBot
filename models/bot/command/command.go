@@ -38,6 +38,10 @@ func Setup() *gopolutils.Exception {
 	if except != nil {
 		return except
 	}
+	except = commandEntries.Insert(Ban.String(), handleVod)
+	if except != nil {
+		return except
+	}
 	return nil
 }
 
