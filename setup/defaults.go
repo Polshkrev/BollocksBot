@@ -21,6 +21,9 @@ var (
 				"topic": "Making the chat bot.",
 			},
 		},
+		"socials": goserialize.Object{
+			"vod": "https://www.youtube.com/@polshkrev",
+		},
 		"logging": goserialize.Object{
 			"folder": "logs",
 			"format": "2006-01",
