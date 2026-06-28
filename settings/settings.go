@@ -3,6 +3,7 @@ package settings
 import (
 	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/fayl"
+	"github.com/Polshkrev/goserialize"
 )
 
 const (
@@ -32,16 +33,17 @@ type TwitchSettings struct {
 
 // Logging settings.
 type Logging struct {
-	Folder string `json:"folder"`
-	Format string `json:"format"`
+	Folder string `json:"folder"` // Parent folder of the logs.
+	Format string `json:"format"` // Format of the log file.
 }
 
 // Global settings of the application.
 type Settings struct {
-	BotName             string         `json:"botName"`             // name of the bot.
-	EnviornmentFilename string         `json:"enviornmentFilename"` // Name of the .env file.
-	Twitch              TwitchSettings `json:"twitch"`              // Encapsulation of the twitch-specific settings.
-	Logging             Logging        `json:"logging"`
+	BotName             string             `json:"botName"`             // name of the bot.
+	EnviornmentFilename string             `json:"enviornmentFilename"` // Name of the .env file.
+	Twitch              TwitchSettings     `json:"twitch"`              // Encapsulation of the twitch-specific settings.
+	Socials             goserialize.Object `json:"socials"`             // Social links.
+	Logging             Logging            `json:"logging"`             // Logging settings.
 }
 
 // Read a [Settings] object from a given [fayl.Path].
