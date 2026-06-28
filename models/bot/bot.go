@@ -25,6 +25,7 @@ import (
 const (
 	crlf        string = "\r\n"                // Line feed charactor.
 	pingMessage string = "PONG :tmi.twitch.tv" // Standard response to a health check.
+	pingStamp   string = "[PING]"              // Stamp to log on a ping message.
 )
 
 // IRC Bot.
@@ -59,6 +60,17 @@ func (bot *Bot) Respond(message string) {
 	bot.logger.Log(fmt.Sprintf("%s: %s", bot.setttings.BotName, message), gopolutils.Info)
 }
 
+func isEmpty(value string) bool {
+	return value == "" || len(value) == 0
+}
+
+func commandToString(rawCommand string, rawArgument string, recipient string) string {
+	if isEmpty(rawArgument) {
+		return command.HandleCommand(rawCommand, recipient)
+	}
+	return command.HandleCommand(rawCommand, rawArgument)
+}
+
 // Handle each message that comes through the bot's IRC client.
 // Returns true if the message can be parsed, else false.
 func (bot *Bot) HandleMessage(message string) bool {
@@ -66,6 +78,7 @@ func (bot *Bot) HandleMessage(message string) bool {
 
 	var messageCString *C.char = C.CString(message)
 	defer C.free(unsafe.Pointer(messageCString))
+
 	C.lexer_set_source(&lexer, messageCString)
 
 	var tokens C.token_array_t
@@ -77,24 +90,25 @@ func (bot *Bot) HandleMessage(message string) bool {
 		return false
 	}
 
-	bot.logger.Log(fmt.Sprintf("%s: %s", sizedToString(messageType.name), sizedToString(messageType.text)), gopolutils.Info)
+	var text SizedString = SizedStringFrom(messageType.text)
 
-	if !C.parse_command(&messageType) {
+	if text.IsEmpty() {
 		sendPing(bot, &messageType)
 		return true
 	}
 
-	var rawCommand string = trimSizedString(messageType.command)
-	var rawArgument string = sizedToString(messageType.arguments)
+	var name string = SizedStringFrom(messageType.name).String()
 
-	var raw string
+	bot.logger.Log(fmt.Sprintf("%s: %s", name, text), gopolutils.Info)
 
-	if rawArgument == "" || len(rawArgument) == 0 {
-		raw = command.HandleCommand(rawCommand, sizedToString(messageType.name))
-	} else {
-		raw = command.HandleCommand(rawCommand, rawArgument)
+	if !C.parse_command(&messageType) {
+		return true
 	}
-	bot.Respond(raw)
+
+	var rawCommand string = SizedStringFrom(messageType.command).Trim()
+	var rawArgument string = SizedStringFrom(messageType.arguments).String()
+
+	bot.Respond(commandToString(rawCommand, rawArgument, name))
 	return true
 }
 
@@ -136,28 +150,17 @@ func (bot *Bot) WaitForInput(reader *bufio.Reader) {
 
 }
 
-// Convert a sized string to a go string.
-// Returns a given sized string to a go string.
-func sizedToString(raw C.string_t) string {
-	return C.GoStringN(raw.data, C.int(raw.count))
-}
-
-// Return a given sized string as a go string without whitespace.
-// Returns a sized string as a go string without whitespace.
-func trimSizedString(raw C.string_t) string {
-	return strings.TrimSpace(sizedToString(raw))
-}
-
 // Send the healthcheck response through the bot's IRC client.
 func sendPing(bot *Bot, message *C.message_t) {
-	if sizedToString(message.keyword) != string(models.Ping) {
+	if SizedStringFrom(message.keyword).String() != string(models.Ping) {
 		return
 	}
-	bot.Write(handlePing())
+	bot.Write(handlePing(bot.logger))
 }
 
 // Obtain the response to a health check.
 // Returns pong.
-func handlePing() string {
+func handlePing(logger *gopolutils.Logger) string {
+	logger.Log(pingStamp, gopolutils.Info)
 	return pingMessage
 }

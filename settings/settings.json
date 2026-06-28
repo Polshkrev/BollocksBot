@@ -8,6 +8,10 @@
         "baseUrl": "irc-ws.chat.twitch.tv",
         "port": 443,
         "channelName": "polshkrev",
+        "socials":
+        {
+            "vod": "https://www.youtube.com/@polshkrev"
+        },
         "today":
         {
             "topic": "Creating an api"

@@ -2,60 +2,79 @@ package command
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
+	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/collections"
 )
 
 var (
-	commandEntries collections.Collection[Command] = collections.NewArray[Command]() // Command lookup table.
+	commandEntries collections.Mapping[string, Caller] = collections.NewMap[string, Caller]() // Command lookup table.
 )
 
-type CommandCaller func(argument string) string // Command callback type alias.
-
-// Representation of a command in chat.
-type Command struct {
-	name   string
-	caller CommandCaller
-}
-
-// Construct a new command with a given name and callback.
-// Returns a new command with a given name and callback.
-func New(name string, caller CommandCaller) Command {
-	var command *Command = new(Command)
-	command.name = name
-	command.caller = caller
-	return *command
-}
+type Caller func(argument string) string // Callback type alias.
 
 // Setup the command lookup table.
-func Setup() {
-	commandEntries.Append(New(string(Available), AvailableCommands))
-	commandEntries.Append(New(string(Ping), handlePing))
-	commandEntries.Append(New(string(Hello), handleHello))
-	commandEntries.Append(New(string(Today), handleToday))
+// If the commands can not be setup, a [gopolutils.KeyError] is returned.
+func Setup() *gopolutils.Exception {
+	var except *gopolutils.Exception = commandEntries.Insert(Available.String(), AvailableCommands)
+	if except != nil {
+		return except
+	}
+	except = commandEntries.Insert(Ping.String(), handlePing)
+	if except != nil {
+		return except
+	}
+	except = commandEntries.Insert(Hello.String(), handleHello)
+	if except != nil {
+		return except
+	}
+	except = commandEntries.Insert(Today.String(), handleToday)
+	if except != nil {
+		return except
+	}
+	except = commandEntries.Insert(Youtube.String(), handleVod)
+	if except != nil {
+		return except
+	}
+	except = commandEntries.Insert(Ban.String(), handleBan)
+	if except != nil {
+		return except
+	}
+	return nil
 }
 
 // Call a command's callback of a given name with a given argument.
 // Returns a new message to write to the chat.
 func HandleCommand(name string, argument string) string {
-	var command Command
-	for _, command = range commandEntries.Collect() {
-		if command.name != name {
-			continue
-		}
-		return command.caller(argument)
+	if !commandEntries.HasKey(name) {
+		return handleUnknown(fmt.Sprintf("!%s", name))
 	}
-	return handleUnknown(name)
+	return (*gopolutils.Must(commandEntries.At(name)))(argument)
+}
+
+// Sort the given commands alphabetically.
+// The given command slice is modified.
+func sortCommands(names *[]string) {
+	slices.Sort(*names)
+}
+
+// Prepend a bang charactor to each name in the given name slice.
+// Returns a new slice based on the prepended charactor.
+func formatCommand(names []string) []string {
+	var result []string
+	var i int
+	for i = range names {
+		result = append(result, fmt.Sprintf("!%s", names[i]))
+	}
+	return result
 }
 
 // Represent all available command options as a string.
 // Returns a string representation of all available command options.
 func AvailableCommands(_ string) string {
-	var command Command
-	var names []string
-	for _, command = range commandEntries.Collect() {
-		names = append(names, fmt.Sprintf("!%s", command.name))
-	}
-	return strings.Join(names, "; ")
+	var keys []string = commandEntries.Keys()
+	sortCommands(&keys)
+	return strings.Join(formatCommand(keys), "; ")
 }
