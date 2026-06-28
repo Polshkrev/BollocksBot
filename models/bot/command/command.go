@@ -60,9 +60,9 @@ func sortCommands(names *[]string) {
 // Returns a new slice based on the prepended charactor.
 func formatCommand(names []string) []string {
 	var result []string
-	var name string
-	for _, name = range names {
-		result = append(result, fmt.Sprintf("!%s", name))
+	var i int
+	for i = range names {
+		result = append(result, fmt.Sprintf("!%s", names[i]))
 	}
 	return result
 }
