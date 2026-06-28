@@ -34,9 +34,9 @@ func urlParse(raw string) url.URL {
 
 // Write a variadic amount of messages through the given bot's IRC client.
 func writeMessages(bot *bot.Bot, messages ...string) {
-	var message string
-	for _, message = range messages {
-		bot.Write(message)
+	var i int
+	for i = range messages {
+		bot.Write(messages[i])
 	}
 }
 
