@@ -25,6 +25,7 @@ import (
 const (
 	crlf        string = "\r\n"                // Line feed charactor.
 	pingMessage string = "PONG :tmi.twitch.tv" // Standard response to a health check.
+	pingStamp   string = "[PING]"              // Stamp to log on a ping message.
 )
 
 // IRC Bot.
@@ -160,6 +161,6 @@ func sendPing(bot *Bot, message *C.message_t) {
 // Obtain the response to a health check.
 // Returns pong.
 func handlePing(logger *gopolutils.Logger) string {
-	logger.Log("[PING MESSAGE]", gopolutils.Info)
+	logger.Log(pingStamp, gopolutils.Info)
 	return pingMessage
 }

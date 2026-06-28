@@ -6,6 +6,7 @@ import "github.com/Polshkrev/gopolutils"
 type Name gopolutils.StringEnum
 
 const (
+	Ban       Name = "ban"      // A ban command.
 	Available Name = "commands" // List all available commands.
 	Hello     Name = "hello"    // Say hello.
 	Ping      Name = "ping"     // Ping the bot.
