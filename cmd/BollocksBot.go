@@ -5,46 +5,19 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/Polshkrev/BollocksBot/models"
 	"github.com/Polshkrev/BollocksBot/models/bot"
 	"github.com/Polshkrev/BollocksBot/models/bot/command"
+	"github.com/Polshkrev/BollocksBot/models/enviornment"
 	"github.com/Polshkrev/BollocksBot/models/irc"
 	"github.com/Polshkrev/BollocksBot/settings"
 	"github.com/Polshkrev/BollocksBot/setup"
 	"github.com/Polshkrev/gopolutils"
-	"github.com/Polshkrev/gopolutils/collections"
 	"github.com/Polshkrev/gopolutils/fayl"
-	"github.com/joho/godotenv"
+	"github.com/Polshkrev/goserialize"
 )
-
-// Load a given .env file as a [collections.Mapping].
-// Returns a [collections.Mapping] of a given .env file.
-// If the given file does not exist, this function `panics` with a [gopolutils.FileNotFoundError].
-// If the .env file can not be read, this function `panics` with an [gopolutils.OSError].
-// If the key is already in the mapping, instead of just quietly not inserting into the mapping, this function `panics` with a [gopolutils.KeyError].
-func loadEnviorment(file *fayl.Path) collections.Mapping[string, string] {
-	if !file.Exists() {
-		panic(gopolutils.NewNamedException(gopolutils.FileNotFoundError, "'%s' does not exist.", file))
-	}
-	var result collections.Mapping[string, string] = collections.NewMap[string, string]()
-	var raw map[string]string
-	var readError error
-	raw, readError = godotenv.Read(file.String())
-	if readError != nil {
-		panic(gopolutils.NewNamedException(gopolutils.OSError, "%s\n", readError.Error()))
-	}
-	var key, value string
-	for key, value = range raw {
-		var insertExcept *gopolutils.Exception = result.Insert(key, value)
-		if insertExcept != nil {
-			panic(insertExcept)
-		}
-	}
-	return result
-}
 
 // Parse a given raw URL.
 // Returns a [url.URL] representation of the given raw URL.
@@ -67,19 +40,23 @@ func writeMessages(bot *bot.Bot, messages ...string) {
 	}
 }
 
-// Check if the given key is stored in the system's enviornment.
-// Returns true if the given key is set within the system's enviornment.
-func check(key string) bool {
-	var ok bool
-	_, ok = os.LookupEnv(key)
-	return ok
+// Set the today command's enviornment variable.
+func setToday(value string) {
+	var except *gopolutils.Exception = enviornment.Set(command.Today.String(), value)
+	if except != nil {
+		panic(except)
+	}
 }
 
-// Set the today command's enviornment variable.
-func setTodayCommand(value string) {
-	var setError error = os.Setenv(strings.ToUpper(string(command.Today)), value)
-	if setError != nil {
-		panic(gopolutils.NewNamedException(gopolutils.KeyError, "%s", setError))
+// Set the links within the commands's enviornment.
+func setLinks(links goserialize.Object) {
+	var key string
+	var value any
+	for key, value = range links {
+		var except *gopolutils.Exception = enviornment.Set(key, value.(string))
+		if except != nil {
+			panic(except)
+		}
 	}
 }
 
@@ -88,17 +65,13 @@ func main() {
 
 	var configuration settings.Settings = settings.Read(settingsPath)
 
-	setTodayCommand(configuration.Twitch.Today.Topic)
+	var enviornmentFile *fayl.Path = gopolutils.Must(setup.Configuration(fayl.PathFrom(configuration.EnviornmentFilename)))
+	var enviornmentVariables enviornment.Enviornment = enviornment.From(enviornmentFile)
 
-	var token string
+	var token string = enviornment.Get(enviornmentVariables, configuration.Twitch.TokenKey)
 
-	if !check(configuration.Twitch.TokenKey) {
-		var enviornmentFile *fayl.Path = gopolutils.Must(setup.Configuration(fayl.PathFrom(configuration.EnviornmentFilename)))
-		var enviornment collections.Mapping[string, string] = loadEnviorment(enviornmentFile)
-		token = *gopolutils.Must(enviornment.At(configuration.Twitch.TokenKey))
-	} else {
-		token = os.Getenv(configuration.Twitch.TokenKey)
-	}
+	setToday(configuration.Twitch.Today.Topic)
+	setLinks(configuration.Socials)
 
 	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", configuration.Twitch.Scheme, configuration.Twitch.BaseUrl, configuration.Twitch.Port))
 	var authMessage string = fmt.Sprintf("%s %s", models.Authenticate, token)
@@ -118,7 +91,10 @@ func main() {
 	var bot *bot.Bot = bot.New(irc, logger, configuration)
 	writeMessages(bot, authMessage, nameMessage, joinMessage)
 
-	command.Setup()
+	except = command.Setup()
+	if except != nil {
+		panic(except)
+	}
 
 	var waitGroup *sync.WaitGroup = new(sync.WaitGroup)
 
