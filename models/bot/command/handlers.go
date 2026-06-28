@@ -37,7 +37,7 @@ func get(key string) string {
 
 // Callback for the `ban` command.
 func handleBan(argument string) string {
-	return fmt.Sprintf("%s has been banned.", argument)
+	return fmt.Sprintf("\"%s\" has been banned.", argument)
 }
 
 // Callback for the 'hello' command.
