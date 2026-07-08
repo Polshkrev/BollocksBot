@@ -3,7 +3,8 @@ package setup
 import "github.com/Polshkrev/goserialize"
 
 const (
-	folder string = "BollocksBot" // Configuration folder name. This should be set to the name of the bot.
+	userFolder string = "polshkrev"   // Group configuration folder name.
+	folder     string = "BollocksBot" // Configuration folder name. This should be set to the name of the bot.
 )
 
 var (
@@ -18,7 +19,8 @@ var (
 			"port":        443,
 			"channelName": "polshkrev",
 			"today": goserialize.Object{
-				"topic": "Making the chat bot.",
+				"topic":   "Making the chat bot.",
+				"project": "https://github.com/Polshkrev/BollocksBot",
 			},
 		},
 		"socials": goserialize.Object{

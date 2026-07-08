@@ -84,11 +84,20 @@ func makeConfiguration() *fayl.Path {
 func Configuration(path *fayl.Path) (*fayl.Path, *gopolutils.Exception) {
 	var configurationPath *fayl.Path = makeConfiguration()
 
-	var botPath *fayl.Path = configurationPath.Join(*fayl.PathFrom(folder))
+	var userFolderPath *fayl.Path = configurationPath.JoinAs(userFolder)
+	var userFolderEntry *fayl.Entry = fayl.NewEntry(userFolderPath)
+	userFolderEntry.SetType(fayl.DirectoryType)
+
+	var except *gopolutils.Exception = makeEntry(userFolderEntry)
+	if except != nil {
+		return nil, except
+	}
+
+	var botPath *fayl.Path = userFolderPath.Join(*fayl.PathFrom(folder))
 	var botEntry *fayl.Entry = fayl.NewEntry(botPath)
 	botEntry.SetType(fayl.DirectoryType)
 
-	var except *gopolutils.Exception = makeEntry(botEntry)
+	except = makeEntry(botEntry)
 	if except != nil {
 		return nil, except
 	}
