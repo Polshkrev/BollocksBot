@@ -11,6 +11,7 @@ const (
 	Hello     Name = "hello"    // Say hello.
 	Ping      Name = "ping"     // Ping the bot.
 	Today     Name = "today"    // Find out what the stream topic is today.
+	Project   Name = "project"  // Obtain the link to the currently active project.
 	Youtube   Name = "vod"      // Display the vod channel.
 )
 

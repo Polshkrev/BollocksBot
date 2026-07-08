@@ -18,7 +18,8 @@ var (
 
 // Dynamic today command settings.
 type TodayCommand struct {
-	Topic string `json:"topic"` // Topic of the today command
+	Topic   string `json:"topic"`   // Topic of the today command
+	Project string `json:"project"` // Link to the currently active project.
 }
 
 // Twitch specific settings.

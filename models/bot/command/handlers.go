@@ -50,9 +50,18 @@ func handlePing(argument string) string {
 	return fmt.Sprintf("@%s pong", argument)
 }
 
-// Callback for the 'today' command
+// Callback for the 'today' command.
 func handleToday(argument string) string {
 	return fmt.Sprintf("@%s %s", argument, get(strings.ToUpper(Today.String())))
+}
+
+// Callback for the 'project' command.
+func handleProject(argument string) string {
+	var upperKey string = strings.ToUpper(Project.String())
+	if !enviornment.Check(upperKey) {
+		return fmt.Sprintf("@%s This is no project set today. Try the \"!today\" command.", argument)
+	}
+	return fmt.Sprintf("@%s %s", argument, get(upperKey))
 }
 
 // Callback for the `vod` command.

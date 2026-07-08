@@ -48,6 +48,14 @@ func setToday(value string) {
 	}
 }
 
+// Set the project command's enviornment variable.
+func setProject(value string) {
+	var except *gopolutils.Exception = enviornment.Set(command.Project.String(), value)
+	if except != nil {
+		panic(except)
+	}
+}
+
 // Set the links within the commands's enviornment.
 func setLinks(links goserialize.Object) {
 	var key string
@@ -71,6 +79,9 @@ func main() {
 	var token string = enviornment.Get(enviornmentVariables, configuration.Twitch.TokenKey)
 
 	setToday(configuration.Twitch.Today.Topic)
+	if len(configuration.Twitch.Today.Project) != 0 {
+		setProject(configuration.Twitch.Today.Project)
+	}
 	setLinks(configuration.Socials)
 
 	var ircUrl url.URL = urlParse(fmt.Sprintf("%s://%s:%d", configuration.Twitch.Scheme, configuration.Twitch.BaseUrl, configuration.Twitch.Port))

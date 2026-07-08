@@ -34,6 +34,10 @@ func Setup() *gopolutils.Exception {
 	if except != nil {
 		return except
 	}
+	except = commandEntries.Insert(Project.String(), handleProject)
+	if except != nil {
+		return except
+	}
 	except = commandEntries.Insert(Youtube.String(), handleVod)
 	if except != nil {
 		return except
