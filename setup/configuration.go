@@ -1,24 +1,9 @@
 package setup
 
 import (
-	"os"
-
 	"github.com/Polshkrev/gopolutils"
 	"github.com/Polshkrev/gopolutils/fayl"
 )
-
-// Obtain the configuration folder name.
-// Returns the configuration path.
-// If the configuration path can not be obtained, a [gopolutils.FileNotFound] error is returned.
-func GetConfigurationPath() (*fayl.Path, *gopolutils.Exception) {
-	var result string
-	var configurationError error
-	result, configurationError = os.UserConfigDir()
-	if configurationError != nil {
-		return nil, gopolutils.NewNamedException(gopolutils.FileNotFoundError, "%s", configurationError.Error())
-	}
-	return fayl.PathFrom(result), nil
-}
 
 // Concurrently create a given entry.
 func makeConcurrentEntry(entry *fayl.Entry, errorChannel chan<- *gopolutils.Exception) {
