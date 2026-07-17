@@ -65,10 +65,7 @@ func isEmpty(value string) bool {
 }
 
 func commandToString(rawCommand string, rawArgument string, recipient string) string {
-	if isEmpty(rawArgument) {
-		return command.HandleCommand(rawCommand, recipient)
-	}
-	return command.HandleCommand(rawCommand, rawArgument)
+	return command.HandleCommand(rawCommand, rawArgument, recipient)
 }
 
 // Handle each message that comes through the bot's IRC client.
