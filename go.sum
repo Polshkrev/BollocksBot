@@ -1,4 +1,8 @@
-github.com/Polshkrev/gopolutils v1.35.0 h1:UOTJxFeOnJiCm9Ej/FyIMp2nXvfVPEWDthHNXyWd3Ew=
-github.com/Polshkrev/gopolutils v1.35.0/go.mod h1:fKokHtSywevqX/6znl44nD6uA5vub/6vEuk3LvArH2Y=
+github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
+github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
+github.com/Polshkrev/gopolutils v1.38.0 h1:ajE+Mof3TLT1JnsLgfeSXHxRSmFI6KNNSz2jmpL7DgU=
+github.com/Polshkrev/gopolutils v1.38.0/go.mod h1:GcuX6FIyynd0k8slTrqVAEd8t3273GQGZuRjPfURRwI=
+github.com/Polshkrev/goserialize v0.10.0 h1:yuEXy11YcrSMkwwRfLphwEGUlzwuSlf5vESs3d0eJvs=
+github.com/Polshkrev/goserialize v0.10.0/go.mod h1:MNr8B1/V3qtWRYBpSocvvVpS0JguibHnvc02ce34crc=
 github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
