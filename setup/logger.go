@@ -29,7 +29,6 @@ func Logging(logFolder, format string) (*fayl.Path, *gopolutils.Exception) {
 
 	var userFolderPath *fayl.Path = configurationPath.JoinAs(userFolder)
 	var userFolderEntry *fayl.Entry = fayl.NewEntry(userFolderPath)
-	userFolderEntry.SetType(fayl.DirectoryType)
 
 	var except *gopolutils.Exception = makeEntry(userFolderEntry)
 	if except != nil {
@@ -38,7 +37,6 @@ func Logging(logFolder, format string) (*fayl.Path, *gopolutils.Exception) {
 
 	var botPath *fayl.Path = userFolderPath.Join(*fayl.PathFrom(folder))
 	var botEntry *fayl.Entry = fayl.NewEntry(botPath)
-	botEntry.SetType(fayl.DirectoryType)
 
 	except = makeEntry(botEntry)
 	if except != nil {
