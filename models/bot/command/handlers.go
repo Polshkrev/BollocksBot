@@ -36,41 +36,41 @@ func get(key string) string {
 }
 
 // Callback for the `ban` command.
-func handleBan(argument string) string {
-	return fmt.Sprintf("\"%s\" has been banned.", argument)
+func handleBan(argument, sender string) string {
+	return fmt.Sprintf("@%s \"%s\" has been banned.", sender, argument)
 }
 
 // Callback for the 'hello' command.
-func handleHello(argument string) string {
-	return fmt.Sprintf("Hello @%s", argument)
+func handleHello(_, sender string) string {
+	return fmt.Sprintf("Hello @%s", sender)
 }
 
 // Callback for the 'ping' command.
-func handlePing(argument string) string {
-	return fmt.Sprintf("@%s pong", argument)
+func handlePing(_, sender string) string {
+	return fmt.Sprintf("@%s pong", sender)
 }
 
 // Callback for the 'today' command.
-func handleToday(argument string) string {
-	return fmt.Sprintf("@%s %s", argument, get(strings.ToUpper(Today.String())))
+func handleToday(_, sender string) string {
+	return fmt.Sprintf("@%s %s", sender, get(strings.ToUpper(Today.String())))
 }
 
 // Callback for the 'project' command.
-func handleProject(argument string) string {
+func handleProject(_, sender string) string {
 	var upperKey string = strings.ToUpper(Project.String())
 	if !enviornment.Check(upperKey) {
-		return fmt.Sprintf("@%s This is no project set today. Try the \"!today\" command.", argument)
+		return fmt.Sprintf("@%s This is no project set today. Try the \"!today\" command.", sender)
 	}
-	return fmt.Sprintf("@%s %s", argument, get(upperKey))
+	return fmt.Sprintf("@%s %s", sender, get(upperKey))
 }
 
 // Callback for the `vod` command.
-func handleVod(argument string) string {
+func handleVod(_, sender string) string {
 	var link string = get(strings.ToUpper(Youtube.String()))
-	return fmt.Sprintf("@%s %s", argument, link)
+	return fmt.Sprintf("@%s %s", sender, link)
 }
 
 // Callback for an unknown command.
-func handleUnknown(argument string) string {
-	return fmt.Sprintf("Unknwown Command: \"%s\"", argument)
+func handleUnknown(argument, sender string) string {
+	return fmt.Sprintf("@%s Unknwown Command: \"%s\"", sender, argument)
 }
