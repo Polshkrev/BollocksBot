@@ -50,10 +50,8 @@ func makeEntry(entry *fayl.Entry) *gopolutils.Exception {
 func makeConcurrentConfiguration(resultChannel chan<- *fayl.Path, errorChannel chan<- *gopolutils.Exception) {
 	defer close(resultChannel)
 	defer close(errorChannel)
-	var configurationPath *fayl.Path
-	var except *gopolutils.Exception
-	configurationPath, except = GetConfigurationPath()
-	if except != nil {
+	var configurationPath *fayl.Path = fayl.Configuration()
+	if !configurationPath.Exists() {
 		var configurationEntry *fayl.Entry = fayl.NewEntry(configurationPath)
 		configurationEntry.SetType(fayl.DirectoryType)
 		errorChannel <- makeEntry(configurationEntry)
