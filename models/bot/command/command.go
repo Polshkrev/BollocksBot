@@ -13,7 +13,7 @@ var (
 	commandEntries collections.Mapping[string, Caller] = collections.NewMap[string, Caller]() // Command lookup table.
 )
 
-type Caller func(argument string) string // Callback type alias.
+type Caller func(argument string, sender string) string // Callback type alias.
 
 // Setup the command lookup table.
 // If the commands can not be setup, a [gopolutils.KeyError] is returned.
@@ -51,11 +51,11 @@ func Setup() *gopolutils.Exception {
 
 // Call a command's callback of a given name with a given argument.
 // Returns a new message to write to the chat.
-func HandleCommand(name string, argument string) string {
+func HandleCommand(name, argument, sender string) string {
 	if !commandEntries.HasKey(name) {
-		return handleUnknown(fmt.Sprintf("!%s", name))
+		return handleUnknown(fmt.Sprintf("!%s", name), sender)
 	}
-	return (*gopolutils.Must(commandEntries.At(name)))(argument)
+	return (*gopolutils.Must(commandEntries.At(name)))(argument, sender)
 }
 
 // Sort the given commands alphabetically.
@@ -77,7 +77,7 @@ func formatCommand(names []string) []string {
 
 // Represent all available command options as a string.
 // Returns a string representation of all available command options.
-func AvailableCommands(_ string) string {
+func AvailableCommands(_, _ string) string {
 	var keys []string = commandEntries.Keys()
 	sortCommands(&keys)
 	return strings.Join(formatCommand(keys), "; ")
